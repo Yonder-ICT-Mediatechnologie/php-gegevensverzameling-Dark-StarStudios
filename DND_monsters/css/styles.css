@@ -1,0 +1,78 @@
+#logo{
+    width: 50px;
+    animation-name: logo;
+    animation-duration: 55s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes logo {
+    from  {transform: rotate(0);}
+    to  {transform: rotate(360deg);}
+  }
+
+.p-10{
+    padding: 10px;
+}
+.p-top{
+    padding-top: 10px;
+}
+.W{
+    width: 31vw;
+}
+.text-center{
+    text-align: center;
+}
+
+td,th{
+    border-left: black 2px solid;
+}
+
+a{
+    text-decoration: none;
+    color: #2d3c4d;
+}
+a:hover{
+    color: red;
+}
+/* ------------------------------------- */
+
+
+.bg-oranje{
+    background-color: #bd7536;
+}
+.text-grijs{
+    color: #2d3c4d;
+}
+.logo{
+    width: 5em;
+    height: 5em;
+}
+.img-monster{
+    width: 31vw;
+    height: 15vw;
+    background-size: cover;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+.panel-monsters{
+    display: flex;
+    /* flex-direction: row; */
+    flex-wrap:wrap;
+    justify-content: space-around;
+}
+.WW{
+    word-wrap: break-word;
+}
+/* ----------------------------------------- */
+
+
+h2:first-of-type {   
+/* animation: slidein 7s infinite;  */
+animation: showup 7s infinite;
+}
+
+@keyframes showup {
+0% {opacity:0;}
+20% {opacity:1;}
+80% {opacity:1;}
+100% {opacity:0;}
+}
