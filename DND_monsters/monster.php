@@ -24,7 +24,7 @@
         unset($_COOKIE['waarschruwing']);
     }
     //Alles functies om monsters te bijwerken
-    include 'CRUDmonstersSysteem.php';
+    require 'CRUDmonstersSysteem.php';
     echo $gebruikersNaam;
     ?>
     </title>
@@ -94,11 +94,16 @@
                 monsterDelete(intval($_GET['monster']),$gebruikersID);
             }
             if(isset($_GET["monsterUpdate"])){
-                    monsterUpdate($_GET["what"],$_GET["type"],$_GET["monsterUpdate"],intval($_GET['monster']), $gebruikersID);
-                }
+                monsterUpdate($_GET["what"],$_GET["type"],$_GET["monsterUpdate"],intval($_GET['monster']), $gebruikersID);
+            }
+            
 
 
             monsterRaeader(intval($_GET["monster"]),$gebruikersID);
+            
+            if(isset($_POST["makePDF"])){
+                makePDF($html,$PDFname);
+            }
         ?>
             </div>
         </div>

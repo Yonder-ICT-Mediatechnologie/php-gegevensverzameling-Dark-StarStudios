@@ -1,6 +1,12 @@
 <?php
+require '../vendor/autoload.php';
+// reference the Dompdf namespace
+use Dompdf\Dompdf;
 // Array met gegevens voor de database connectie naar "dnd_npc"
 $serverConnectieData = ["localhost","root","","dnd_npc"];
+
+$html = "";
+$PDFname = "document.pdf";
 
 //Controleer of alle posts in array niet leeg zijn
 function post_control($array){
@@ -151,9 +157,13 @@ function Mijn_monstersRaeader($gebruikersID){
     }
 }
 
+
+
 //Een monster van gebruiker laat zien
 function monsterRaeader($idMonster,$gebruikersID){
     global $serverConnectieData;
+    global $html;
+    global $PDFname;
     try
     {
         // Maak een nieuwe connectie naar de database "dnd_npc"
@@ -180,6 +190,45 @@ function monsterRaeader($idMonster,$gebruikersID){
         // Haal de resultaten op
         while($statement->fetch())
         {
+            $html = "
+            <h1>$postNaam</h1>
+            <ul>
+                <li><strong>Challenge:</strong> $postDanger  </li>
+                <li><strong>Armor Class:</strong> $postArmor  </li>
+                <li><strong>Hit Points:</strong> $postHP  </li>
+                <li><strong>Speed:</strong> $postSpeed feet</li>
+            </ul>
+            <table><thead><tr><th>Ability Score</th>
+                <th>STR</th>
+                <th>DEX</th>
+                <th>CON</th>
+                <th>INT</th>
+                <th>WIS</th>
+                <th>CHA</th>
+            </tr></thead><tbody><tr><td>Score</td>
+                <td>$postStrength</td>
+                <td>$postDexterity </td>
+                <td>$postConstitution</td>
+                <td>$postIntellihence</td>
+                <td>$postWisdom</td>
+                <td>$postCharisma</td>
+            </tr><tr><td>Modifier</td>
+                <td>(".eigenschappenRekenen($postStrength).")</td>
+                <td>(".eigenschappenRekenen($postDexterity).")</td>
+                <td>(".eigenschappenRekenen($postConstitution).")</td>
+                <td>(".eigenschappenRekenen($postIntellihence).")</td>
+                <td>(".eigenschappenRekenen($postWisdom).")</td>
+                <td>(".eigenschappenRekenen($postCharisma).")</td>
+            </tr></tbody></table>
+            <br>
+            <br>
+            <p><strong>Proficiency Bonus:</strong> $postMasteryBonus<br><strong>Damage Immunities:</strong> $postImmunities<br><strong>Vulnerabilities:</strong> $postVulnerabilities  </p>
+            <h2>Actions</h2>
+            <ul>
+            <li><strong>$postActions</strong></li>
+            </ul>";
+                $PDFname = $postNaam."[$postDanger].pdf";
+
             if($gebruikersID == $postgebruikersID){
                 echo "<div class='bg-light rounded m-2 p-3'>
                 
@@ -216,7 +265,7 @@ function monsterRaeader($idMonster,$gebruikersID){
                     </form>
                 </div>";
             }else{
-                echo "<div class='bg-light rounded m-2 p-3'>
+                echo"<div class='bg-light rounded m-2 p-3'>
                 
                     <h3 class='p-1 WW'><b>$postNaam</b></h3>
                     <h4 class='p-1 WW mb-4'>Challenge $postDanger</h4>
@@ -237,9 +286,16 @@ function monsterRaeader($idMonster,$gebruikersID){
                     <h3 class='p-1 WW'><b>Damage Immunities: </b>$postImmunities</h3>
                     <h3 class='p-1 WW'><b>Vulnerabilities: </b>$postVulnerabilities</h3>
                     <h3 class='p-1 WW mt-5'><b>Actions: </b>$postActions</h3>
-                </div>";
+                <form class='d-grid' action='#' method='post'>
+                                <input type='hidden' name='makePDF'>
+                                <button type='submit' class='shadow btn btn-danger'>Download PDF</button>
+                            </form></div>";
             }
+
             
+            // echo "test";
+            
+
         }
     }
     catch(Exception $e)
@@ -396,4 +452,42 @@ function monsterMaken($postNaam,$postArmor,$postHP,$postStrength,$postDexterity,
             // header("location: home.php");
             exit(); // Zorg ervoor dat het script stopt na de header redirect
     }
+}
+
+function makePDF($html,$PDFname){
+    // instantiate and use the dompdf class
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml("<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+        <style>
+            body{background:#f7ebcb;font-family:Libre Baskerville,serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:16px}h1,h2,h3,h4,h5,h6{color:#7a2b17;text-transform:uppercase;line-height:1.1;margin:24px 0 12px}h1:first-letter,h2:first-letter,h3:first-letter,h4:first-letter,h5:first-letter,h6:first-letter{font-size:150%}h1{font-size:24px}h1,h2{border-bottom:2px solid tan}p{line-height:1.4;margin:0}p+p{text-indent:24px;margin-top:0!important}.box{background-color:#fff;padding:16px;border-left:2px solid #000;border-right:2px solid #000;overflow:hidden;margin:16px 0}
+                    html {
+                        box-sizing: border-box;
+                    }
+                    body, html {
+                        padding: 25px;
+                        margin: 0;
+                    }
+                    *, :after, :before {
+                        box-sizing: inherit;
+                    }
+                    main {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 0 12px;
+                    }
+        </style>
+    </head>
+    <body>".$html."</div></body></html>");
+
+    // (Optional) Setup the paper size and orientation
+    $dompdf->setPaper('A4', 'landscape');
+    ob_clean();
+    // Render the HTML as PDF
+    $dompdf->render();
+
+    // Output the generated PDF to Browser
+    $dompdf->stream($PDFname, ["Attachment" => true]);
 }
