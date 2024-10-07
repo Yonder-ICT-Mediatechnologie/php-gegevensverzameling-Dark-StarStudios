@@ -2,11 +2,17 @@
 require '../vendor/autoload.php';
 // reference the Dompdf namespace
 use Dompdf\Dompdf;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 // Array met gegevens voor de database connectie naar "dnd_npc"
 $serverConnectieData = ["localhost","root","","dnd_npc"];
 
 $html = "";
 $PDFname = "document.pdf";
+
+$XLSX_data = [];
+$XLSXname = "document.xlsx"; 
 
 //Controleer of alle posts in array niet leeg zijn
 function post_control($array){
@@ -164,6 +170,9 @@ function monsterRaeader($idMonster,$gebruikersID){
     global $serverConnectieData;
     global $html;
     global $PDFname;
+    global $XLSX_data;
+    global $XLSXname;
+
     try
     {
         // Maak een nieuwe connectie naar de database "dnd_npc"
@@ -228,6 +237,8 @@ function monsterRaeader($idMonster,$gebruikersID){
             <li><strong>$postActions</strong></li>
             </ul>";
                 $PDFname = $postNaam."[$postDanger].pdf";
+                $XLSX_data = ["",$postNaam,$postDanger,$postArmor,$postHP,$postStrength,$postDexterity,$postConstitution,$postIntellihence,$postWisdom,$postCharisma,$postSpeed,$postMasteryBonus,$postImmunities,$postVulnerabilities,$postActions,"".eigenschappenRekenen($postStrength),"".eigenschappenRekenen($postDexterity),"".eigenschappenRekenen($postConstitution),"".eigenschappenRekenen($postIntellihence),"".eigenschappenRekenen($postWisdom),"".eigenschappenRekenen($postCharisma)];
+                $XLSXname = $postNaam."[$postDanger].xlsx";
 
             if($gebruikersID == $postgebruikersID){
                 echo "<div class='bg-light rounded m-2 p-3'>
@@ -259,10 +270,20 @@ function monsterRaeader($idMonster,$gebruikersID){
                     <h3 class='p-1 WW'><b>Damage Immunities: </b>$postImmunities <img onclick='update(`Immuniteit`,`Immunities`,`s`)' src='img/icons8-settings.svg' /></h3>
                     <h3 class='p-1 WW'><b>Vulnerabilities: </b>$postVulnerabilities <img onclick='update(`kwetsbaarheden`,`vulnerabilities`,`s`)' src='img/icons8-settings.svg' /></h3>
                     <h3 class='p-1 WW mt-5'><b>Actions: </b>$postActions <img onclick='update(`actie`,`actions`,`s`)' src='img/icons8-settings.svg' /></h3>
-                    <form class='d-grid' action='monster.php?monster=".$_GET["monster"]."&Delete=true' method='post'>
+                    <form class='d-grid mb-1' action='monster.php?monster=".$_GET["monster"]."&Delete=true' method='post'>
                         <input type='hidden' name='Delete'>
                         <button type='submit' class='shadow btn btn-danger'>Verwijderen</button>
                     </form>
+                    <hr>
+                    <form class='d-grid mt-1' action='#' method='post'>
+                                <input type='hidden' name='makeXLSX'>
+                                <button type='submit' class='shadow btn btn-success'>Download XLSX</button>
+                            </form>
+                    <form class='d-grid mt-1' action='#' method='post'>
+                                <input type='hidden' name='makePDF'>
+                                <button type='submit' class='shadow btn btn-danger'>Download PDF</button>
+                            </form>
+                
                 </div>";
             }else{
                 echo"<div class='bg-light rounded m-2 p-3'>
@@ -286,10 +307,15 @@ function monsterRaeader($idMonster,$gebruikersID){
                     <h3 class='p-1 WW'><b>Damage Immunities: </b>$postImmunities</h3>
                     <h3 class='p-1 WW'><b>Vulnerabilities: </b>$postVulnerabilities</h3>
                     <h3 class='p-1 WW mt-5'><b>Actions: </b>$postActions</h3>
-                <form class='d-grid' action='#' method='post'>
+                <form class='d-grid mb-1' action='#' method='post'>
+                                <input type='hidden' name='makeXLSX'>
+                                <button type='submit' class='shadow btn btn-success'>Download XLSX</button>
+                            </form>
+                            <form class='d-grid' action='#' method='post'>
                                 <input type='hidden' name='makePDF'>
                                 <button type='submit' class='shadow btn btn-danger'>Download PDF</button>
-                            </form></div>";
+                            </form>
+                            </div>";
             }
 
             
@@ -490,4 +516,46 @@ function makePDF($html,$PDFname){
 
     // Output the generated PDF to Browser
     $dompdf->stream($PDFname, ["Attachment" => true]);
+}
+
+function XLSXmake(){
+    global $XLSXname;
+    global $XLSX_data;
+    // Nieuwe Object Spreadsheet maken
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Kopteksten instellen
+    $tabel_titles = [
+        "",
+        "Name",
+        "Challenge",
+        "Armor",
+        "HP",
+        "Strength",
+        "Dexterity",
+        "Constitution",
+        "Intellihence",
+        "Wisdom",
+        "Charisma",
+        "Speed",
+        "MasteryBonus",
+        "Immunities",
+        "Vulnerabilities",
+        "Actions"
+    ];
+    // data instellen
+    for($i=1; $i<=15; $i++){
+        $sheet->setCellValue('A'.$i, $tabel_titles[$i]);
+        $sheet->setCellValue('B'.$i, $XLSX_data[$i]);
+    }
+    for($i=16; $i<=21; $i++){
+        $sheet->setCellValue('C'.($i-11), $XLSX_data[$i]);
+    }
+
+    // Object Writer maken voor file opslaan
+    $writer = new Xlsx($spreadsheet);
+
+    // Een file word opgeslaan.
+    $writer->save($XLSXname);
 }

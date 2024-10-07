@@ -102,7 +102,10 @@
             monsterRaeader(intval($_GET["monster"]),$gebruikersID);
             
             if(isset($_POST["makePDF"])){
-                makePDF($html,$PDFname);
+                makePDF($html,$PDFname); 
+            }
+            if(isset($_POST["makeXLSX"])){
+                XLSXmake();
             }
         ?>
             </div>
