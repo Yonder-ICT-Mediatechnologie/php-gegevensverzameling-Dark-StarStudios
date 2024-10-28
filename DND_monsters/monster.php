@@ -74,22 +74,6 @@
         <div class="container-fluid">
             <div>
         <?php
-
-            // if(isset($_GET["monsterUpdatename"])){
-            //     monsterUpdate('name','s',$_GET["monsterUpdatename"],intval($_GET['monster']), $gebruikersID);
-            // }
-            // if(isset($_GET["monsterUpdateDanger"])){
-            //     monsterUpdate('Danger','s',$_GET["monsterUpdateDanger"],intval($_GET['monster']), $gebruikersID);
-            // }
-            // if(isset($_GET["monsterUpdatearmor"])){
-            //     monsterUpdate('armor','s',$_GET["monsterUpdatearmor"],intval($_GET['monster']), $gebruikersID);
-            // }
-            // if(isset($_GET["monsterUpdateHP"])){
-            //     monsterUpdate('HP','s',$_GET["monsterUpdateHP"],intval($_GET['monster']), $gebruikersID);
-            // }
-            // if(isset($_GET["monsterUpdatespeed"])){
-            //     monsterUpdate('speed','s',$_GET["monsterUpdatespeed"],intval($_GET['monster']), $gebruikersID);
-            // }
             if(isset($_GET["Delete"])){
                 monsterDelete(intval($_GET['monster']),$gebruikersID);
             }
