@@ -10,6 +10,8 @@
     require_once 'session_visitor.php';
     //Alles functies om monsters te bijwerken
     require_once 'CRUDmonstersSysteem.php';
+    use MonstersSysteem\CRUD;
+    $CRUD = new CRUD;
     echo $gebruikersNaam;
     ?>
     </title>
@@ -59,7 +61,7 @@
         <div class="container-fluid">
             <div class="panel-monsters">
         <?php
-        monstersRaeader();
+        $CRUD->monstersRaeader();
         ?>
             </div>
         </div>

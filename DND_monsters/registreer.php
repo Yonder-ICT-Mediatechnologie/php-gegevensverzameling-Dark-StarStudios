@@ -17,17 +17,19 @@
     //Mijn kleine bibliotheek verbind met deze pagina
     //Het is een speciale bibliotheek om accounten te maken of in de accounten te inloggen 
     require_once 'account.php';
+    use Identity\account;
+    $account = new account();
     //Controleer of REQUEST METHOD POST is. Het is om de volgende if-statement niet te beginnen
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         //Controleer of alle post niet leeg zijn. Als ze zijn wel leeg dan komt een kennisgeving.
-        if(post_control([$_POST["wachtwoord"], $_POST["naam"],$_POST["email"],$_POST["herhaal_wachtwoord"]]))
+        if($account->post_control([$_POST["wachtwoord"], $_POST["naam"],$_POST["email"],$_POST["herhaal_wachtwoord"]]))
         {
             //Controleer of alle twee wachtwoords hetzelfde zijn, als het is niet waar dan komt kennisgeving.
-            if(herhaal_wachtwoord_control($_POST["wachtwoord"], $_POST["herhaal_wachtwoord"]))
+            if($account->herhaal_wachtwoord_control($_POST["wachtwoord"], $_POST["herhaal_wachtwoord"]))
             {
                 //Roepen Register functie met argumenten
-                Registreren(htmlspecialchars($_POST["email"]),htmlspecialchars($_POST["naam"]),htmlspecialchars($_POST["wachtwoord"]));
+                $account->Registreren(htmlspecialchars($_POST["email"]),htmlspecialchars($_POST["naam"]),htmlspecialchars($_POST["wachtwoord"]));
             }
             else
             {

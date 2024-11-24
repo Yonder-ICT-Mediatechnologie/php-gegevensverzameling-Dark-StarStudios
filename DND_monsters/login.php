@@ -13,13 +13,19 @@
 <?php
     //Mijn kleine bibliotheek verbind met deze pagina 
     //Het is een speciale bibliotheek om accounten te maken of in de accounten te inloggen
+
     require_once 'account.php';
+
+    use Identity\account;
+    $account = new account();
+
     //SESSION OPSTARTEN
     session_start();
     //Controleer of email post wel bestaat, als wel dan login functie opstarten
     if ((isset($_POST["email"])))
     {
-        login(htmlspecialchars($_POST["email"]),htmlspecialchars($_POST["wachtwoord"]));
+        
+        $account->login(htmlspecialchars($_POST["email"]),htmlspecialchars($_POST["wachtwoord"]));
     }
 
 ?>

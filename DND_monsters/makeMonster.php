@@ -19,28 +19,30 @@
     require_once 'session.php';
     //Alles functies om monsters te bijwerken
     require_once 'CRUDmonstersSysteem.php';
+    use MonstersSysteem\CRUD;
+    $CRUD = new CRUD;
     //Controleer of REQUEST METHOD POST is
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         //Controleer of alle post niet leeg zijn. Als ze zijn wel leeg dan komt een kennisgeving.
-        if(post_control([$_POST["naam"]]))
+        if($CRUD->post_control([$_POST["naam"]]))
         {
                 //Roepen functie advertentieMaken met argumenten
-                monsterMaken(htmlspecialchars(controllText($_POST["naam"])),
-                htmlspecialchars(controllMaxMin(intval($_POST["armor"]))),
+                $CRUD->monsterMaken(htmlspecialchars($CRUD->controllText($_POST["naam"])),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["armor"]))),
                 htmlspecialchars(intval($_POST["HP"])),
-                htmlspecialchars(controllMaxMin(intval($_POST["strength"]))),
-                htmlspecialchars(controllMaxMin(intval($_POST["dexterity"]))),
-                htmlspecialchars(controllMaxMin(intval($_POST["constitution"]))),
-                htmlspecialchars(controllMaxMin(intval($_POST["intelligence"]))),
-                htmlspecialchars(controllMaxMin(intval($_POST["wisdom"]))),
-                htmlspecialchars(controllMaxMin(intval($_POST["charisma"]))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["strength"]))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["dexterity"]))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["constitution"]))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["intelligence"]))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["wisdom"]))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["charisma"]))),
                 htmlspecialchars(intval($_POST["speed"])),
-                htmlspecialchars(controllMaxMin(number_format((float)$_POST["Danger"], 2, ',', ''))),
-                htmlspecialchars(controllMaxMin(intval($_POST["Mastery_Bonus"]))),
-                htmlspecialchars(controllText($_POST["Immunities"])),
-                htmlspecialchars(controllText($_POST["vulnerabilities"])),
-                htmlspecialchars(controllText($_POST["actions"])),
+                htmlspecialchars($CRUD->controllMaxMin(number_format((float)$_POST["Danger"], 2, ',', ''))),
+                htmlspecialchars($CRUD->controllMaxMin(intval($_POST["Mastery_Bonus"]))),
+                htmlspecialchars($CRUD->controllText($_POST["Immunities"])),
+                htmlspecialchars($CRUD->controllText($_POST["vulnerabilities"])),
+                htmlspecialchars($CRUD->controllText($_POST["actions"])),
                 $gebruikersID);
                 
         }else

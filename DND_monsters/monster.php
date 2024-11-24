@@ -25,6 +25,8 @@
     }
     //Alles functies om monsters te bijwerken
     require 'CRUDmonstersSysteem.php';
+    use MonstersSysteem\CRUD;
+    $CRUD = new CRUD;
     echo $gebruikersNaam;
     ?>
     </title>
@@ -75,21 +77,21 @@
             <div>
         <?php
             if(isset($_GET["Delete"])){
-                monsterDelete(intval($_GET['monster']),$gebruikersID);
+                $CRUD->monsterDelete(intval($_GET['monster']),$gebruikersID);
             }
             if(isset($_GET["monsterUpdate"])){
-                monsterUpdate($_GET["what"],$_GET["type"],$_GET["monsterUpdate"],intval($_GET['monster']), $gebruikersID);
+                $CRUD->monsterUpdate($_GET["what"],$_GET["type"],$_GET["monsterUpdate"],intval($_GET['monster']), $gebruikersID);
             }
             
 
 
-            monsterRaeader(intval($_GET["monster"]),$gebruikersID);
+            $CRUD->monsterRaeader(intval($_GET["monster"]),$gebruikersID);
             
             if(isset($_POST["makePDF"])){
-                makePDF($html,$PDFname); 
+                $CRUD->makePDF(); 
             }
             if(isset($_POST["makeXLSX"])){
-                XLSXmake();
+                $CRUD->XLSXmake();
             }
         ?>
             </div>
